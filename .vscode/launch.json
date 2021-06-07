@@ -12,7 +12,13 @@
             "console": "integratedTerminal",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}"
-            }
+            },
+            "args": [
+                "agent",
+                "-c",
+                "-n",
+                "zlagent"
+            ]
         }
     ]
 }

@@ -1,8 +1,9 @@
 import os
 import sys
+from settings import DOWNLOAD_URL
 
 
-__all__ = ['download']
+__all__ = ['download', 'ZLAGENT']
 
 
 def _python2_env():
@@ -56,3 +57,14 @@ def download(download_url=None, filename_to_save=None):
     else:
         print('[Agent][ERROR] - failed downloading to ' + filename_to_save)
         return False
+
+
+ZLAGENT = 'zlagent'
+
+
+def create_agent(agent_name, path):
+
+    download_url = DOWNLOAD_URL + '/' + agent_name + '.owl'
+    download(download_url, path)
+    download_url = DOWNLOAD_URL + '/' + agent_name + '.py'
+    download(download_url, path)
