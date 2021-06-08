@@ -1,6 +1,7 @@
 import os
 import sys
-from settings import DOWNLOAD_URL
+from aletheia.settings import DOWNLOAD_URL
+import hashlib
 
 
 __all__ = ['download', 'ZLAGENT']
@@ -68,3 +69,13 @@ def create_agent(agent_name, path):
     download(download_url, path)
     download_url = DOWNLOAD_URL + '/' + agent_name + '.py'
     download(download_url, path)
+
+
+def gen_md5(path):
+    md5_hash = hashlib.md5()
+    a_file = open(path, 'rb')
+    content = a_file.read()
+    md5_hash.update(content)
+
+    digest = md5_hash.hexdigest()
+    return digest

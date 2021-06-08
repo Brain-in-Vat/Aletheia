@@ -1,5 +1,5 @@
 import argparse
-from agents import create_agent
+from aletheia.agents import create_agent
 
 
 def process(args):

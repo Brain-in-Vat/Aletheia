@@ -1,6 +1,6 @@
 from owlready2 import get_ontology, default_world, sync_reasoner_pellet, World, set_datatype_iri
 import os
-from settings import BASE_DIR
+from aletheia.settings import BASE_DIR
 from mesa import Agent, Model
 import random
 

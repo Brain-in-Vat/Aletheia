@@ -67,8 +67,13 @@ class ZLAgent(Agent):
                             individual.__dict__[property] = ready_value
 
     def observe(self):
-        """ here update the knowlege of agent """
-        pass
+        """ here update the knowlege of agent 
+            the zlagent focus on the trade price when they make descisions
+        """
+        self.onto.noToken.currentPrice = 0.5
+        self.onto.yesToken.currentPrice = 0.5
+        self.onto.GNO.myBanlance = 10
+        self.onto.mySelf.myWealth = 10
 
     def execute(self):
         """here u write the execute logical
@@ -80,3 +85,17 @@ class ZLAgent(Agent):
         self.observe()
         self.think()
         self.execute()
+
+    def print_beleif(self):
+        """
+        """
+
+        pass
+
+    def add_belief(self):
+        pass
+
+
+if __name__ == '__main__':
+    agent = ZLAgent(None, None, None)
+    agent.step()
