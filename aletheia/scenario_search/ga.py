@@ -3,7 +3,9 @@ from random import randint
 # from runlocal import evaluate as run_evaluate
 import random
 from aletheia.settings import BASE_DIR
+import json
 import os
+import shutil
 
 
 class Gene:
@@ -25,17 +27,17 @@ class GA:
         for key, value in self.bound.items():
             if isinstance(key, tuple):
                 for i in range(key[0], key[1]):
-                    tmp[i] = value          
+                    tmp[i] = value
             elif isinstance(key, int):
                 tmp[key] = value
 
         self.bound = tmp
-        self.evaulate = parameter['evaluate']
-        self.init_the_group(self)
+        self.evaluate = parameter['evaluate']
         self.result_path = parameter['result_path']
         self.NGEN = parameter['NGEN']
         self.CXPB = parameter['CXPB']
         self.MUTPB = parameter['MUTPB']
+        self.init_the_group()
 
     def init_the_group(self):
         pop = []
@@ -43,11 +45,18 @@ class GA:
             geneinfo = [
                 randint(self.bound[i][0], self.bound[i][1]) for i in range(len(self.bound))
             ]
-            fitness, measure = self.evaulate(geneinfo)
-            pop.append({'Gene': Gene(data=geneinfo), 'fitness': fitness, 'measure': measure})
-            
+            fitness, measure = self.evaluate(geneinfo)
+            pop.append({'Gene': Gene(data=geneinfo),
+                        'fitness': fitness, 'measure': measure})
+
         self.pop = pop
         self.bestindividual = self.selectBest(self.pop)
+
+        if os.path.exists(self.result_path):
+            if os.path.isfile(self.result_path):
+                os.remove(self.result_path)
+            elif os.isdir(self.result_path):
+                shutil.rmtree(self.result_path)
 
     def selectBest(self, pop):
         s_inds = sorted(pop, key=itemgetter('fitness'), reverse=True)
@@ -108,15 +117,29 @@ class GA:
             pos = random.randrange(0, dim)
         crossoff.data[pos] = random.randint(bound[pos][0], bound[pos][1])
         return crossoff
-    
-    def save_gene(self, gene, gen=0, index=0, save_path='tmp'):
-        gene_data = gene['Gene'].data
-        fit_nesss = gene['fitness']
-        tmp_path = os.path.join(save_path, 'gene_fitness_{}_{}.csv'.format(gen, index))
-        with open(tmp_path, 'w', newline='') as f:
-            pass
-        pass
-    
+
+    # def save_gene(self, gene, gen=0, index=0, save_path='tmp'):
+    #     gene_data = gene['Gene'].data
+    #     fit_nesss = gene['fitness']
+    #     tmp_path = os.path.join(save_path, 'gene_fitness_{}_{}.csv'.format(gen, index))
+    #     with open(tmp_path, 'w', newline='') as f:
+
+    #         pass
+    #     pass
+
+    def save_gen(self, gen):
+        with open(self.result_path, 'a', encoding='utf-8') as f:
+            datas = {
+                'gen': gen,
+                # 'pop': [data.]
+                'pop': [
+                    {'Gene': x['Gene'].data, 'fitness': x['fitness'], 'measure':x['measure']} for x in self.pop
+                ],
+                'best': {'Gene': self.bestindividual['Gene'].data, 'fitness': self.bestindividual['fitness'], 'measure': self.bestindividual['measure']}
+            }
+            datas = json.dumps(datas, ensure_ascii=False)
+            f.write(datas + "\n")
+
     def GA_main(self):
         popsize = self.popsize
         print('Start of evolution')
@@ -126,38 +149,38 @@ class GA:
 
         for g in range(NGEN):
             print('############ Generation {} ############'.format(g))
-            
+            self.save_gen(g)
+
             selectpop = self.selection(self.pop, popsize)
-            
-            
+
             nextoff = []
             while len(nextoff) != popsize:
                 offspring = [selectpop.pop() for _ in range(2)]
-                
+
                 if random.random() < CXPB:
                     crossoff1, crossoff2 = self.crossoperate(offspring)
                     if random.random() < MUTPB:  # mutate an individual with probability MUTPB
                         muteoff1 = self.mutation(crossoff1, self.bound)
                         muteoff2 = self.mutation(crossoff2, self.bound)
                         # Evaluate the individuals
-                        fit_muteoff1, fit_mute_price1, fit_mute_vote1, addresses = self.evaluate(
+                        fit_muteoff1, measure = self.evaluate(
                             muteoff1.data)
                         # Evaluate the individuals
-                        fit_muteoff2, fit_mute_price2, fit_mute_vote2, addresses = self.evaluate(
+                        fit_muteoff2, measure = self.evaluate(
                             muteoff2.data)
                         nextoff.append(
-                            {'Gene': muteoff1, 'fitness': fit_muteoff1, 'prices':  fit_mute_price1, 'votes': fit_mute_vote1, 'address': addresses})
+                            {'Gene': muteoff1, 'fitness': fit_muteoff1, 'measure': measure})
                         nextoff.append(
-                            {'Gene': muteoff2, 'fitness': fit_muteoff2, 'prices': fit_mute_price2, 'votes': fit_mute_vote2, 'address': addresses})
+                            {'Gene': muteoff2, 'fitness': fit_muteoff2, 'measure': measure})
                     else:
-                        fit_crossoff1, fit_cross_price1, fit_cross_vote1, addresses = self.evaluate(
+                        fit_crossoff1, measure = self.evaluate(
                             crossoff1.data)  # Evaluate the individuals
-                        fit_crossoff2, fit_cross_price2, fit_cross_vote2, addresses = self.evaluate(
+                        fit_crossoff2, measure = self.evaluate(
                             crossoff2.data)
                         nextoff.append(
-                            {'Gene': crossoff1, 'fitness': fit_crossoff1, 'prices': fit_cross_price1, 'votes': fit_cross_vote1, 'address': addresses})
+                            {'Gene': crossoff1, 'fitness': fit_crossoff1, 'measure': measure})
                         nextoff.append(
-                            {'Gene': crossoff2, 'fitness': fit_crossoff2, 'prices': fit_cross_price2, 'votes': fit_cross_vote2, 'address': addresses})
+                            {'Gene': crossoff2, 'fitness': fit_crossoff2, 'measure': measure})
                 else:
                     nextoff.extend(offspring)
 
@@ -172,7 +195,6 @@ class GA:
             print("Best individual found is {}, {}".format(self.bestindividual['Gene'].data,
                                                            self.bestindividual['fitness']))
             print("  Max fitness of current pop: {}".format(max(fits)))
- 
 
 
 if __name__ == '__main__':

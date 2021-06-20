@@ -63,9 +63,9 @@ class QFFutarchy:
             trades =  v['trades']
             for trade in trades:
                 if trade['id'] in users:
-                    users['id'] += trade['amount']
+                    users[trade['id']] += trade['amount']
                 else:
-                    users['id'] = trade['amount']
+                    users[trade['id']] = trade['amount']
 
         self.award_list.append(1)
         return users

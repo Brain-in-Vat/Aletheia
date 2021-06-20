@@ -35,14 +35,31 @@ class FixZLAgent(Agent):
         self.model = model
         self.beliefs = beliefs
         self.grant = {}
+        self.brain_token = 0
+        
+    def award_token(self, token):
+        self.token += token
+        
+    def award_brain_token(self, brain_token):
+        self.brain_token += brain_token
         
     def donate(self):
         def buy(project):
-            if self.token > self.model.qf_futarchy.lmsr.calc_price(project, 1):
+            token_cost = self.model.qf_futarchy.lmsr.calc_price(project, 1)
+
+            if self.token + self.brain_token > token_cost:
                 self.model.qf_futarchy.lmsr.buy(project, 1, self.unique_id)
+                if token_cost >= self.brain_token:
+                    self.brain_token -= token_cost
+                else:
+                    token_cost = token_cost - self.brain_token
+                    self.brain_token = 0
+                    self.token = self.token - token_cost
                 
         def grant(project):
+            grant_cost = self.beliefs[project]
             if self.token > self.beliefs[project]:
+                self.token = self.token - grant_cost
                 self.model.qf.grant(project, self.unique_id, self.beliefs[project])
 
         projects = self.model.projects
