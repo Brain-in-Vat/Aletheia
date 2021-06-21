@@ -14,7 +14,7 @@ import os
 
 
 class QFFutarchyModel(Model):
-    def __init__(self, projects_num=10, beliefs=[], tokens=[], pass_ratio=0.9):
+    def __init__(self, projects_num=10, beliefs=[], tokens=[], pass_ratio=0.8):
         # self.qf = QuadraticFunding()
         self.schedule = RandomActivation(self)
         # todo add agents
@@ -126,7 +126,7 @@ def compute_experiment(result_path='result.json'):
     project_number = 5
     run = GA(
         popsize=100,
-        bound={(0, agent_number): (0, project_number),
+        bound={(0, agent_number): (0, project_number - 1),
                (agent_number, 2*agent_number): (0, 200)},
         evaluate=evaluate,
         result_path=os.path.join(BASE_DIR, 'tmp', result_path),

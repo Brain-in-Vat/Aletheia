@@ -6,6 +6,7 @@ from aletheia.settings import BASE_DIR
 import json
 import os
 import shutil
+import math
 
 
 class Gene:
@@ -64,13 +65,13 @@ class GA:
 
     def selection(self, individuals, k):
         s_inds = sorted(individuals, key=itemgetter('fitness'), reverse=True)
-        sum_fits = sum(ind['fitness'] for ind in individuals)
+        sum_fits = sum(abs(ind['fitness']) for ind in individuals)
         chosen = []
         for i in range(k):
             u = random.random() * sum_fits
             sum_ = 0
             for ind in s_inds:
-                sum_ += ind['fitness']
+                sum_ += abs(ind['fitness'])
                 if sum_ >= u:
                     chosen.append(ind)
                     break
@@ -118,15 +119,6 @@ class GA:
         crossoff.data[pos] = random.randint(bound[pos][0], bound[pos][1])
         return crossoff
 
-    # def save_gene(self, gene, gen=0, index=0, save_path='tmp'):
-    #     gene_data = gene['Gene'].data
-    #     fit_nesss = gene['fitness']
-    #     tmp_path = os.path.join(save_path, 'gene_fitness_{}_{}.csv'.format(gen, index))
-    #     with open(tmp_path, 'w', newline='') as f:
-
-    #         pass
-    #     pass
-
     def save_gen(self, gen):
         with open(self.result_path, 'a', encoding='utf-8') as f:
             datas = {
@@ -155,6 +147,8 @@ class GA:
 
             nextoff = []
             while len(nextoff) != popsize:
+                if len(selectpop) < 2:
+                    print('debug')
                 offspring = [selectpop.pop() for _ in range(2)]
 
                 if random.random() < CXPB:
