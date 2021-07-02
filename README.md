@@ -39,3 +39,29 @@ todo.
 ### 实验场景搜索模块
 
 ### 结果展示模块
+
+### References
+https://github.com/dgornjakovic/daofirst-bot
+https://github.com/BarnBridge/
+https://github.com/SubDAO-Network/
+https://github.com/dappforce
+https://github.com/zhhuffman/Governor
+https://github.com/The-APIS
+https://github.com/alchemyplatform
+https://github.com/Panvala/panvala
+https://github.com/basketdao
+https://github.com/bosonprotocol
+https://github.com/degatedev?tab=repositories
+https://github.com/elasticdao
+https://github.com/Moloch-Mystics
+https://github.com/vocdoni?page=1
+https://github.com/daomaker/tokens-vesting-contract/tree/master/contracts
+https://github.com/gnosis?utf8=%E2%9C%93&q=safe
+https://github.com/openlawteam
+https://github.com/dali-lab/release-the-llama
+https://github.com/parcelhq
+https://github.com/enzymefinance
+https://github.com/withtally/
+https://github.com/graphprotocol/ethdenver-dapp
+https://github.com/idavollnetwork
+https://github.com/thelastjosh/govbase
