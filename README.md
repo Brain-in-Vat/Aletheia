@@ -1,4 +1,8 @@
-# Aletheia
+<b>Aletheia is under development</b>
+
+<b>Aletheia正在开发当中</b>
+
+Aletheia
 
 Aletheia是一个由智能计算驱动的虚拟系统工具组件。旨在通过计算实验/数学工程化的手段，对复杂系统的治理机制的设计、测试、验证进行计算、模拟，以实现系统的科学设计及决策。
 
